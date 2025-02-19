@@ -1,0 +1,49 @@
+server:
+  address: localhost
+  port: 8280
+
+jwt:
+  public-key: src/main/resources/public_key.pem
+  private-key: src/main/resources/private_key.pem
+
+spring:
+  h2:
+    console:
+      path: /h2-console
+      enabled: true
+  datasource:
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:mem:websiteDB;DB_CLOSE_DELAY=-1;
+    username: admin
+    password: admin
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: websitemaster591@gmail.com
+    password: jienladpiydxyyds
+    properties:
+      smtp:
+        socketFactory:
+          port: 465
+          class: javax.net.ssl.SSLSocketFactory
+        auth: true
+        starttls:
+          enable: true
+
+
+mail:
+  store:
+    protocol: imap
+  imap:
+    host: imap.gmail.com
+    port: 993
+
+contacts: src/main/resources/Contacts.json
+login-message: src/main/resources/LoginMessage.txt
+front-end-link: http://localhost:5100/activation
+paypal:
+  client-id: AbyhDjGHwvmxhdU6sKk_6ysArSAqEhKLBmw3-dnL30erGpc8ngu5rFCmde7azh1GWzQJyMHDATOkY6fz
+  client-secret: ELBINSy2I2H88DDMel68VKp1dsMNVJEYtl-gLSMRgIS8OC5snnrNIgb_hcg3jofjwJfPYXipB--bEN9N
+  mode: sandbox
