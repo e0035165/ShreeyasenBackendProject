@@ -32,6 +32,8 @@ public class SpringSecurityConfig {
 
 
 
+
+
     @Bean
     public SecurityFilterChain getSecurityFilterChain(HttpSecurity http) throws Exception {
         AuthenticationManagerBuilder managerBuilder = http.getSharedObject(AuthenticationManagerBuilder.class);
@@ -39,8 +41,13 @@ public class SpringSecurityConfig {
         AuthenticationManager manager = managerBuilder.build();
         http.cors(cor->cor.configurationSource(source));
         http.authorizeHttpRequests(req->req.requestMatchers("/v1/activation/**").authenticated()
+                .requestMatchers("/v1/Dashboard/**").authenticated()
                 .requestMatchers("/h2-console/**").permitAll()
                 .requestMatchers("/v1/frontPage/**").permitAll()
+                .requestMatchers("/v1/payment/**").permitAll()
+                .requestMatchers("/v1/google_signin/**").permitAll()
+                .requestMatchers("/github/oauth2/**").permitAll()
+
                 .anyRequest().permitAll());
         http.sessionManagement(session->session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
         http.authenticationManager(manager).addFilterBefore(filter, UsernamePasswordAuthenticationFilter.class);

@@ -37,7 +37,8 @@ public class CustowJWTFilter extends OncePerRequestFilter {
     protected void doFilterInternal(@NonNull HttpServletRequest request,
                                     @NonNull HttpServletResponse response,
                                     @NonNull FilterChain filterChain) throws ServletException, IOException {
-        if(request.getRequestURI().contains("/v1/activation")) {
+        if(request.getRequestURI().contains("/v1/activation")
+        || request.getRequestURI().contains("/v1/Dashboard")) {
             String jwt = request.getHeader("Authorization").substring(7);
             Map<String,Object> values = rsa_service.jwtDecrypt(jwt);
             String username = (String) values.get("username");

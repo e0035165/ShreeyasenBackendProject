@@ -71,7 +71,7 @@ public class FrontPageController {
         details.setPassword(encoder.encode((String)loginDetails.get("password")));
         details.setEmail((String) loginDetails.get("email"));
         details.setRoles(List.of(role));
-        node.put("jwt", rsaService.jwtEncrypt(loginDetails));
+        node.put("jwt", "Bearer "+rsaService.jwtEncrypt(loginDetails));
         if(userDetailsService.loadUserByUsername(details.getUsername())==null) {
             userDetailsService.addUser(details);
             node.put("comments","User "+details.getUsername()+" Has been activated. Pending activation.");

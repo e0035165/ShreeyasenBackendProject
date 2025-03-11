@@ -8,6 +8,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 
 @Entity
@@ -33,10 +34,17 @@ public class CustomUserDetails implements UserDetails {
     @ManyToMany(fetch = FetchType.EAGER,cascade = {CascadeType.PERSIST,CascadeType.MERGE})
     @JoinTable(
             name="users_roles",
-            joinColumns = @JoinColumn(name="username",referencedColumnName = "username"),
+            joinColumns = {@JoinColumn(name="username",referencedColumnName = "username"),
+                    @JoinColumn(name = "id",referencedColumnName = "id")},
             inverseJoinColumns = @JoinColumn(name="role_value",referencedColumnName = "name")
     )
     private List<Role>roles;
+
+    @OneToMany(mappedBy = "userDetails")
+    private Set<Contacts> contactsSet;
+
+    @Column(name = "activation")
+    private boolean isActivated;
 
 
     public void addRoles(Role role) {
@@ -76,6 +84,6 @@ public class CustomUserDetails implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return UserDetails.super.isEnabled();
+        return isActivated;
     }
 }

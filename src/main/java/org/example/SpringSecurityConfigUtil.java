@@ -1,6 +1,9 @@
 package org.example;
 
 
+import jakarta.mail.Authenticator;
+import jakarta.mail.PasswordAuthentication;
+import jakarta.mail.Session;
 import org.entity.CustomUserDetails;
 import org.entity.Role;
 import org.services.CustomUserDetailsService;
@@ -12,8 +15,11 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.core.annotation.Order;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
@@ -43,6 +49,8 @@ public class SpringSecurityConfigUtil {
         return new BCryptPasswordEncoder();
     }
 
+
+
     @Bean
     public AuthenticationProvider getAuthProvider(PasswordEncoder encoder) {
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
@@ -50,6 +58,7 @@ public class SpringSecurityConfigUtil {
         adminDetail.setUsername("Admin");
         adminDetail.setPassword(encoder.encode("Admin@95"));
         adminDetail.setEmail("websitemaster591@gmail.com");
+        adminDetail.setActivated(true);
         String jwt = rsa_service.jwtEncrypt(Map.of("username","Admin","password","Admin@95","email","websitemaster591@gmail.com"));
 
         List<Role> allRoles = roleService.getAllRoles();
@@ -61,6 +70,8 @@ public class SpringSecurityConfigUtil {
         System.out.println("Bearer "+jwt);
         return provider;
     }
+
+
 
     @Bean
     @Primary
@@ -97,8 +108,10 @@ public class SpringSecurityConfigUtil {
     @Value("${mail.imap.port}")
     private Integer mailImapsPort;
 
+    private Session session;
+
     @Bean
-    public JavaMailSender getJavaMailSender() {
+    public JavaMailSenderImpl getJavaMailSender() {
         JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
         mailSender.setHost("smtp.gmail.com");
         mailSender.setPort(adminPort);
@@ -109,9 +122,11 @@ public class SpringSecurityConfigUtil {
         props.put("mail.smtp.auth", "true");
         props.put("mail.smtp.starttls.enable", "true");
         props.put("mail.debug", "true");
-
         return mailSender;
     }
+
+
+
 
     @Bean
     @Order(2)

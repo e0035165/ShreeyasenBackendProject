@@ -79,6 +79,33 @@ public class RsaService {
         }
     }
 
+    public String jwtEncrypt(String token, String payerId) {
+        try{
+            JWSSigner signer = new RSASSASigner(this.rsaPrivateKey);
+            JWTClaimsSet sets = new JWTClaimsSet.Builder()
+                    .claim("token",token)
+                    .claim("payerId",payerId)
+                    .issueTime(new Date(System.currentTimeMillis()))
+                    .build();
+            SignedJWT object = new SignedJWT(new JWSHeader.Builder(JWSAlgorithm.RS256).build(), sets);
+            object.sign(signer);
+            JWSVerifier verifier = new RSASSAVerifier(this.rsaPublicKey);
+            if(object.verify(verifier)) {
+                JWEObject jweObject = new JWEObject(
+                        new JWEHeader.Builder(JWEAlgorithm.RSA_OAEP_256,EncryptionMethod.A256GCM).contentType("JWT").build(),
+                        new Payload(object)
+                );
+                RSAEncrypter encrypter = new RSAEncrypter(this.rsaPublicKey);
+                jweObject.encrypt(encrypter);
+                return jweObject.serialize();
+            } else {
+                throw new RuntimeException("JWS Verification has failed");
+            }
+        } catch (JOSEException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public String jwtEncrypt(Map<String, Object> values) {
         try{
             JWSSigner signer = new RSASSASigner(this.rsaPrivateKey);
@@ -122,6 +149,48 @@ public class RsaService {
                 return Jwt.getPayload().toJSONObject();
             } else {
                 throw new RuntimeException("JWS Verification has failed");
+            }
+        } catch (ParseException e) {
+            throw new RuntimeException(e);
+        } catch (JOSEException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
+
+    public String jwsEncrypt(String value) {
+        try{
+            JWSSigner signer = new RSASSASigner(this.rsaPrivateKey);
+            JWSVerifier verifier = new RSASSAVerifier(this.rsaPublicKey);
+            JWTClaimsSet sets = new JWTClaimsSet.Builder()
+                    .claim("value",value)
+                    .subject("github_oauth2_cache")
+                    .issueTime(new Date(System.currentTimeMillis()))
+                    .expirationTime(new Date(System.currentTimeMillis()+1000*60*10))
+                    .build();
+            SignedJWT jwt = new SignedJWT(new JWSHeader(JWSAlgorithm.RS256),sets);
+            jwt.sign(signer);
+            if(jwt.verify(verifier)) {
+                return jwt.serialize();
+            } else {
+                throw new RuntimeException("Key mismatch");
+            }
+        } catch (JOSEException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public String getValue(String token) {
+        try {
+            SignedJWT jwt = SignedJWT.parse(token);
+            JWSSigner signer = new RSASSASigner(this.rsaPrivateKey);
+            JWSVerifier verifier = new RSASSAVerifier(this.rsaPublicKey);
+
+            if(jwt.verify(verifier)) {
+                JWTClaimsSet set = jwt.getJWTClaimsSet();
+                return (String) set.getClaim("value");
+            } else {
+                throw new RuntimeException("Key mismatch for decryption.");
             }
         } catch (ParseException e) {
             throw new RuntimeException(e);

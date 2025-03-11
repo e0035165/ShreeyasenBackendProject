@@ -1,8 +1,12 @@
 package org.example;
 
+import com.paypal.orders.Item;
+import com.paypal.orders.Order;
+import com.paypal.orders.OrdersAuthorizeRequest;
 import org.entity.CustomUserDetails;
 import org.entity.Role;
 import org.services.CustomUserDetailsService;
+import org.services.PaymentService;
 import org.services.RoleService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,9 +15,14 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
+import org.springframework.boot.web.client.RestTemplateBuilder;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.web.client.RestTemplate;
 
+import java.time.Duration;
+import java.time.temporal.TemporalUnit;
 import java.util.List;
 
 /**
@@ -43,6 +52,9 @@ public class App implements CommandLineRunner
     @Autowired
     private CustomUserDetailsService userDetailsService;
 
+    @Autowired
+    private PaymentService paymentService;
+
     @Override
     public void run(String... args) throws Exception {
         LOG.info("Command Line interface execution");
@@ -58,5 +70,22 @@ public class App implements CommandLineRunner
                              ));
         userDetailsService.addUser(admin);
         System.out.println("Completed admin setup");
+        Item item = paymentService.getItem("Socks","socks",4,"SGD","4.99");
+        Item itemTwo = paymentService.getItem("Shoes","shoes",1,"SGD","64.99");
+        Order order = paymentService.getOrder(List.of(item,itemTwo),"SGD",12.99f,"http://localhost:8280/v1/payment/success","https://developer.paypal.com/docs/api/orders/v2/#orders_authorize");
+        System.out.println(order.id());
+        System.out.println(order.status());
+        //System.out.println();
+        order.links().stream().forEach(link->{
+            System.out.println(link.href()+" rel: "+link.rel()+" method: "+link.method());
+        });
+        System.out.println("Payment Test Completed");
+    }
+
+
+
+    @Bean
+    public RestTemplate getRestTemplate() {
+        return new RestTemplateBuilder().connectTimeout(Duration.ofSeconds(2)).build();
     }
 }

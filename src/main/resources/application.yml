@@ -33,6 +33,7 @@ spring:
           enable: true
 
 
+
 mail:
   store:
     protocol: imap
@@ -42,8 +43,13 @@ mail:
 
 contacts: src/main/resources/Contacts.json
 login-message: src/main/resources/LoginMessage.txt
-front-end-link: http://localhost:5100/activation
+front-end-link: http://localhost:5200/activation
 paypal:
-  client-id: AbyhDjGHwvmxhdU6sKk_6ysArSAqEhKLBmw3-dnL30erGpc8ngu5rFCmde7azh1GWzQJyMHDATOkY6fz
-  client-secret: ELBINSy2I2H88DDMel68VKp1dsMNVJEYtl-gLSMRgIS8OC5snnrNIgb_hcg3jofjwJfPYXipB--bEN9N
+  client-id: AdA9PkraPr9pDbfPjB4rUMH1_R2wHQGVggNOUY3Mz7frFOSwzVW7Hx6NexOyeO7AfkFUE-0DD1ij42To
+  client-secret: ELwVOk1nH1cAcUtlWWjBafMUyqSRyRv_YAdByemK18__cv2otLA5rh_TZuD3EbzZ_5YGdwqS5AECNahz
   mode: sandbox
+  merchant-info: sb-vgbuv37296565@business.example.com
+
+github:
+  client_id: Ov23liETvhWUY8zJj9ko
+  client_secret: 459e04eebe687772f352ccfaeb711ca89abc080d
