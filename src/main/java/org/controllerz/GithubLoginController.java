@@ -2,13 +2,13 @@ package org.controllerz;
 
 
 import org.services.CustomUserDetailsService;
+import org.services.EmailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
-import org.utilities.JavaMailSenderUtil;
 
 import java.net.URI;
 import java.util.Collections;
@@ -25,7 +25,7 @@ public class GithubLoginController {
     private CustomUserDetailsService customUserDetailsService;
 
     @Autowired
-    private JavaMailSenderUtil
+    private EmailService emailService;
 
     @Value(value ="${github.client_id}")
     private String client_id;
@@ -73,10 +73,13 @@ public class GithubLoginController {
         headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
         String cliet_id = map.get("client_id").toString();
         String client_sec = map.get("client_secret").toString();
+        String email = map.get("email").toString();
         UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromHttpUrl(userUrl)
                 .queryParam("client_id", cliet_id)
                 .queryParam("scope", scope);
-        return template.exchange(uriBuilder.toUriString(),HttpMethod.POST,entity,Map.class);
+        ResponseEntity<Map>getResult = template.exchange(uriBuilder.toUriString(),HttpMethod.POST,entity,Map.class);
+        emailService.sendSimpleEmail(email,"User request",getResult.getBody().toString());
+        return getResult;
 
     }
 
