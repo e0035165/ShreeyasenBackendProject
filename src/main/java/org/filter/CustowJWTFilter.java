@@ -16,6 +16,7 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.utilities.RsaService;
+import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
 import java.text.ParseException;
@@ -53,6 +54,12 @@ public class CustowJWTFilter extends OncePerRequestFilter {
                 token.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(token);
             }
+        } else if(request.getRequestURI().contains("/v1/logout")) {
+            SecurityContextHolder.clearContext();
+            HttpSession session = request.getSession();
+            if(session!=null)
+                session.invalidate();
+            
         }
         filterChain.doFilter(request,response);
     }

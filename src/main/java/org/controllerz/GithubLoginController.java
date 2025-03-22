@@ -8,6 +8,7 @@ import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
+import org.utilities.JavaMailSenderUtil;
 
 import java.net.URI;
 import java.util.Collections;
@@ -22,6 +23,9 @@ public class GithubLoginController {
 
     @Autowired
     private CustomUserDetailsService customUserDetailsService;
+
+    @Autowired
+    private JavaMailSenderUtil
 
     @Value(value ="${github.client_id}")
     private String client_id;
