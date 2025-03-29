@@ -15,7 +15,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping(path = "/v1/payment")
-@CrossOrigin(origins = {"http://localhost:5200","http://localhost:5400"}, allowedHeaders = {"Authorization", "Content-Type"})
+@CrossOrigin(origins = {"http://localhost:3080","http://localhost:5400"}, allowedHeaders = {"Authorization", "Content-Type"})
 public class PaymentController {
 
     @Autowired
@@ -33,6 +33,7 @@ public class PaymentController {
     public ResponseEntity<?> getCancel() {
         return ResponseEntity.badRequest().body("Payment has cancelled due to issues");
     }
+
 
 
 }

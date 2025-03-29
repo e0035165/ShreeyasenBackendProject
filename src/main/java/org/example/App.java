@@ -60,19 +60,20 @@ public class App implements CommandLineRunner
         LOG.info("Command Line interface execution");
         List<org.entity.Role>allRoles = List.of(
                 new org.entity.Role("ROLE_ADMIN"),
-                new org.entity.Role("ROLE_MANAGER")
+                new org.entity.Role("ROLE_MANAGER"),
+                new org.entity.Role("ROLE_TESTER"),
+                new org.entity.Role("ROLE_USER")
         );
         roleService.addRoles(allRoles);
         CustomUserDetails admin = (CustomUserDetails) userDetailsService.loadUserByUsername("Admin");
         admin.setRoles(List.of(roleService.getRole("ROLE_ADMIN"),
-                                roleService.getRole("ROLE_MANAGER"),
-                                new Role("ROLE_TESTER")
+                                roleService.getRole("ROLE_MANAGER")
                              ));
         userDetailsService.addUser(admin);
         System.out.println("Completed admin setup");
         Item item = paymentService.getItem("Socks","socks",4,"SGD","4.99");
         Item itemTwo = paymentService.getItem("Shoes","shoes",1,"SGD","64.99");
-        Order order = paymentService.getOrder(List.of(item,itemTwo),"SGD",12.99f,"http://localhost:8280/v1/payment/success","https://developer.paypal.com/docs/api/orders/v2/#orders_authorize");
+        Order order = paymentService.getOrder(List.of(item,itemTwo),"SGD",12.99f,"http://localhost:3080/payment/success","http://localhost:3080/payment/failure");
         System.out.println(order.id());
         System.out.println(order.status());
         //System.out.println();

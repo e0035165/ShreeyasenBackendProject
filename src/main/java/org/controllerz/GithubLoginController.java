@@ -14,9 +14,11 @@ import java.net.URI;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 @RestController
 @RequestMapping(path = "/github/oauth2")
+@CrossOrigin(origins = {"http://localhost:3080","http://localhost:5400"}, allowedHeaders = {"Authorization", "Content-Type"})
 public class GithubLoginController {
     @Autowired
     private RestTemplate template;
@@ -35,6 +37,11 @@ public class GithubLoginController {
     private String client_secret;
 
 
+    private String Emailmessage = "Dear {user} " +System.lineSeparator()+
+            "Your generated github token is {token}. Please login within 3 mins of token validity."+System.lineSeparator()
+            +"Thanks and Regards, {user}";
+
+
 
 
     @GetMapping("/callback")
@@ -48,9 +55,11 @@ public class GithubLoginController {
         httpHeaders.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
         HttpEntity<String> entity = new HttpEntity<>(httpHeaders);
         ResponseEntity<Map> resp = template.exchange(uriBuilder.toUriString(), HttpMethod.POST, entity, Map.class);
-        System.out.println(resp.getStatusCode());
         return resp;
     }
+
+//    @GetMapping("/approve")
+//    public ResponseEntity<Map>
 
     @GetMapping("/validate")
     public String getUserInfo(@RequestParam(value = "accessToken") String accessToken) {
@@ -64,7 +73,7 @@ public class GithubLoginController {
 
 
     @PostMapping("/login/code")
-    public ResponseEntity<Map> loginDeviceDetails(@RequestParam(required = true) String scope,
+    public ResponseEntity<Map> loginDeviceDetails(@RequestParam(required = true, value = "scope") String scope,
                                                   @RequestBody Map<String,Object>map) {
         String userUrl = "https://github.com/login/device/code";
         HttpHeaders headers = new HttpHeaders();
@@ -78,7 +87,8 @@ public class GithubLoginController {
                 .queryParam("client_id", cliet_id)
                 .queryParam("scope", scope);
         ResponseEntity<Map>getResult = template.exchange(uriBuilder.toUriString(),HttpMethod.POST,entity,Map.class);
-        emailService.sendSimpleEmail(email,"User request",getResult.getBody().toString());
+        String mailMessage = "The token number is "+ Objects.requireNonNull(getResult.getBody()).get("user_code");
+        emailService.sendSimpleEmail(email,"User request",mailMessage);
         return getResult;
 
     }

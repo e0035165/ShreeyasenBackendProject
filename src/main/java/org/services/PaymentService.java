@@ -165,6 +165,7 @@ public class PaymentService {
         PaymentReference reference=new PaymentReference();
         String data = rsaService.jwtEncrypt(token,payerId);
         //reference.setData(data);
+        reference.setToken(token);reference.setPayer_id(payerId);
         paymentRepository.save(reference);
     }
 

@@ -55,7 +55,7 @@ public class SpringSecurityConfigUtil {
     public AuthenticationProvider getAuthProvider(PasswordEncoder encoder) {
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
         CustomUserDetails adminDetail = new CustomUserDetails();
-        adminDetail.setUsername("Admin");
+        adminDetail.setUsername("Admina");
         adminDetail.setPassword(encoder.encode("Admin@95"));
         adminDetail.setEmail("websitemaster591@gmail.com");
         adminDetail.setActivated(true);
@@ -63,11 +63,25 @@ public class SpringSecurityConfigUtil {
 
         List<Role> allRoles = roleService.getAllRoles();
         adminDetail.setRoles(allRoles);
+
+        System.out.println("Authorization Provider initialized");
+        System.out.println("Bearer "+jwt);
+
+        CustomUserDetails adminDetail2 = new CustomUserDetails();
+        adminDetail2.setUsername("Admin");
+        adminDetail2.setPassword(encoder.encode("Admin123"));
+        adminDetail2.setEmail("resumescanner3@gmail.com");
+        adminDetail2.setActivated(true);
+        String jwt2 = rsa_service.jwtEncrypt(Map.of("username","Admin","password","Admin123","email","resumescanner3@gmail.com"));
+        System.out.println("Bearer "+jwt2);
+        adminDetail2.setActivated(true);
+        adminDetail2.setRoles(allRoles);
+        service.addUser(adminDetail2);
         service.addUser(adminDetail);
         provider.setPasswordEncoder(encoder);
         provider.setUserDetailsService(service);
         System.out.println("Authorization Provider initialized");
-        System.out.println("Bearer "+jwt);
+        System.out.println("Bearer "+jwt2);
         return provider;
     }
 
@@ -77,8 +91,7 @@ public class SpringSecurityConfigUtil {
     @Primary
     public CorsConfigurationSource getCorsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("http://localhost:5200","http://localhost:5400"
-        ,"http://localhost:3000"));
+        configuration.setAllowedOrigins(List.of("http://localhost:3080"));
         configuration.setAllowedMethods(List.of("GET","POST","PUT","DELETE","OPTIONS"));
         configuration.setAllowedHeaders(List.of("Authorization", "Content-Type")); // Allowed headers
         configuration.setExposedHeaders(List.of("Authorization")); // Exposed headers

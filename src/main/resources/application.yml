@@ -31,8 +31,15 @@ spring:
         auth: true
         starttls:
           enable: true
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 500MB
+      max-request-size: 250MB
 
 
+file:
+  upload-dir: uploads
 
 mail:
   store:
@@ -45,11 +52,13 @@ contacts: src/main/resources/Contacts.json
 login-message: src/main/resources/LoginMessage.txt
 front-end-link: http://localhost:5200/activation
 paypal:
-  client-id: AdA9PkraPr9pDbfPjB4rUMH1_R2wHQGVggNOUY3Mz7frFOSwzVW7Hx6NexOyeO7AfkFUE-0DD1ij42To
-  client-secret: ELwVOk1nH1cAcUtlWWjBafMUyqSRyRv_YAdByemK18__cv2otLA5rh_TZuD3EbzZ_5YGdwqS5AECNahz
-  mode: sandbox
-  merchant-info: sb-vgbuv37296565@business.example.com
+  client-id: AcnfeVa4QcDfkfQBgCoUK0e_6hRG_qJYA0oEvsUMmfEv1DjXtFsXrpLZmRHs1izEMBqrrPUbe74mHKkj
+  client-secret: EHNs64LolC6mFjJ6361LQOn-hk9oDnJFHFisr1bupYnq-2JNZeVIWrVIekXfzaG_ogshgH7SsY7X41jV
+  mode: live
+  merchant-info: eeenginmaster95@gmail.com
 
 github:
   client_id: Ov23liETvhWUY8zJj9ko
   client_secret: 459e04eebe687772f352ccfaeb711ca89abc080d
+
+resume_folder: src/main/resources/resumes/

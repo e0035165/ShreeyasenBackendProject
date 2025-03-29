@@ -10,6 +10,7 @@ import org.services.CustomUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
@@ -38,6 +39,19 @@ public class CustowJWTFilter extends OncePerRequestFilter {
     protected void doFilterInternal(@NonNull HttpServletRequest request,
                                     @NonNull HttpServletResponse response,
                                     @NonNull FilterChain filterChain) throws ServletException, IOException {
+
+
+//        if(request.getSession().getAttribute("SPRING_SECURITY_CONTEXT")!=null
+//        && !request.getRequestURI().contains("/v1/logout")) {
+//            System.out.println("Session credentials already saved");
+//            SecurityContext saved = (SecurityContext) request.getSession().getAttribute("SPRING_SECURITY_CONTEXT");
+//            SecurityContextHolder.getContext()
+//                            .setAuthentication(saved.getAuthentication());
+//            System.out.println("Authenticaion set");
+//            filterChain.doFilter(request,response);
+//            return;
+//        }
+
         if(request.getRequestURI().contains("/v1/activation")
         || request.getRequestURI().contains("/v1/Dashboard")) {
             String jwt = request.getHeader("Authorization").substring(7);
@@ -53,12 +67,15 @@ public class CustowJWTFilter extends OncePerRequestFilter {
                 );
                 token.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(token);
+                //request.getSession().setAttribute("SPRING_SECURITY_CONTEXT", SecurityContextHolder.getContext());
+                System.out.println("App credentials acccepted and saved");
             }
         } else if(request.getRequestURI().contains("/v1/logout")) {
+            System.out.println("Logout session started");
             SecurityContextHolder.clearContext();
             HttpSession session = request.getSession();
-            if(session!=null)
-                session.invalidate();
+            session.removeAttribute("SPRING_SECURITY_CONTEXT");
+            session.invalidate();
             
         }
         filterChain.doFilter(request,response);

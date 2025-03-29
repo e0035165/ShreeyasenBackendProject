@@ -13,7 +13,7 @@ import java.util.Set;
 
 
 @Entity
-@Table(name = "Users")
+@Table(name = "User_Details")
 @AllArgsConstructor
 @RequiredArgsConstructor
 @Getter
@@ -32,7 +32,7 @@ public class CustomUserDetails implements UserDetails {
     @Column(name="email", unique = true)
     private String email;
 
-    @ManyToMany(fetch = FetchType.EAGER,cascade = {CascadeType.PERSIST,CascadeType.MERGE})
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name="users_roles",
             joinColumns = {@JoinColumn(name="username",referencedColumnName = "username"),
@@ -41,7 +41,7 @@ public class CustomUserDetails implements UserDetails {
     )
     private List<Role>roles;
 
-    @OneToMany(mappedBy = "userDetails")
+    @OneToMany(mappedBy = "userDetails",cascade = {CascadeType.ALL})
     private Set<Contacts> contactsSet;
 
     @Column(name = "activation")

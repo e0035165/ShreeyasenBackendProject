@@ -16,10 +16,10 @@ public class PaymentReference {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @Column(name="client_id", length = 65535)
-    private String client_id;
+    @Column(name="token", length = 65535)
+    private String token;
 
-    @Column(name="client_secret", length = 65535)
-    private String client_secret;
+    @Column(name="payer_id", length = 65535)
+    private String payer_id;
 
 }

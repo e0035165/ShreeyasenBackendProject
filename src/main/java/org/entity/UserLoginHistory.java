@@ -19,7 +19,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.JoinColumn;
 
 @Entity
-@Table(name="User")
+@Table(name="User_Login_History")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
